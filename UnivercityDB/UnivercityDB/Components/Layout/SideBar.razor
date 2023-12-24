@@ -1,0 +1,25 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<RadzenLayout style="position: relative">
+    <RadzenHeader class="rz-background-color-base-800">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenLabel Text="@_universityTitle" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Icon="list" Path="faculties" Text="Faculties"/>
+            <RadzenPanelMenuItem Icon="assignment_ind" Path="groups" Text="Groups"/>
+            <RadzenPanelMenuItem Icon="account_circle" Path="students" Text="Students"/>
+        </RadzenPanelMenu>        
+    </RadzenSidebar>
+    <RadzenBody>        
+    </RadzenBody>
+</RadzenLayout>
+
+@code {
+    bool sidebarExpanded = false;
+
+    private string _universityTitle = "Default Univercity Title";
+}
