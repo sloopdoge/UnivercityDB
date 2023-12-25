@@ -1,0 +1,44 @@
+﻿@page "/faculties"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [StreamRendering(true)]
+@inject IFacultyService FacultyService
+@inject DialogService DialogService
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Faculties</RadzenText>
+    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="() => OpenFacultyDialog(null)"/>
+</RadzenStack>
+
+
+@if (faculties == null)
+{
+    <span>Loading...</span>
+}
+else if (faculties.Count == 0)
+{
+    <span>No faculties found</span>
+}
+else
+{
+    <RadzenDataGrid Data="@faculties" TItem="Faculty" ColumnWidth="700px">
+        <Columns>
+            <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Faculty" Property="FacultyTitle" Title="Title" Frozen="true" Width="300px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="300px" TextAlign="TextAlign.Center" />
+        </Columns>
+    </RadzenDataGrid>
+}
+
+@code {
+    private List<Faculty> faculties { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        faculties = await FacultyService.GetFaculties();
+    }
+
+    private async Task OpenFacultyDialog(int? id) => 
+        await DialogService.OpenAsync<FacultyDetailsPage>("FacultyDetailsPage",
+            new Dictionary<string, object> { { "id", id } },
+            new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
+}

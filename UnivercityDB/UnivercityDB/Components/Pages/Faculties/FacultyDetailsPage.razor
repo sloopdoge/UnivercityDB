@@ -1,0 +1,65 @@
+﻿@inject IFacultyService FacultyService
+
+@if (id == null)
+{
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Create new faculty</RadzenText>
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Edit @faculty.Title</RadzenText>
+}
+<EditForm Model="faculty" OnSubmit="HandleSubmit">
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="3">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1">
+            <RadzenFormField Text="Faculty title">
+                <RadzenTextBox @bind-Value="@faculty.Title"/>
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1">
+            <RadzenFormField Text="Faculty title">
+                <RadzenTextArea @bind-Value="@faculty.Note" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+            <RadzenButton Text="@_btnText" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary"/>
+        </RadzenStack>
+    </RadzenStack>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    [SupplyParameterFromForm]
+    Faculty faculty { get; set; } = new Faculty();
+
+    private string _btnText = String.Empty;
+
+    protected override void OnInitialized()
+    {
+        _btnText = id == null ? "Create" : "Edit";
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id is not null)
+        {
+            var result = await FacultyService.GetFaculty((int)id);
+
+            if (result is not null)
+                faculty = result;
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (id is null)
+        {
+            await FacultyService.CreateFaculty(faculty);
+        }
+        else
+        {
+            await FacultyService.UpdateFaculty((int)id, faculty);
+        }
+    }
+}

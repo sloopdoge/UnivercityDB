@@ -1,15 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
-<div>
-    <div class="sidebar">
-        <SideBar/>
-    </div>
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<RadzenLayout style="position: relative">
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenLabel Text="@_universityTitle" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Icon="list" Path="faculties" Text="Faculties"
+                Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenPanelMenuItem Icon="assignment_ind" Path="groups" Text="Groups"
+                Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenPanelMenuItem Icon="account_circle" Path="students" Text="Students"
+                Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+        </RadzenPanelMenu>        
+    </RadzenSidebar>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+</RadzenLayout>
+
+@code {
+    bool sidebarExpanded = false;
+
+    private string _universityTitle = "Default Univercity Title";
+}
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

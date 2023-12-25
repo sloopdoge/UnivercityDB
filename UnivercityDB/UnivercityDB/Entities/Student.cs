@@ -1,4 +1,4 @@
-﻿namespace UnivercityDB.Entity
+﻿namespace UnivercityDB.Entities
 {
     public class Student
     {

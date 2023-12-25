@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UnivercityDB.Entity;
+using UnivercityDB.Entities;
 
 namespace UnivercityDB.Data
 {
@@ -9,9 +9,9 @@ namespace UnivercityDB.Data
         {
 
         }
-        DbSet<Faculty> Faculties { get; set; }
-        DbSet<Group> Groups { get; set; }
-        DbSet<Student> Students { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Student> Students { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

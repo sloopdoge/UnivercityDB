@@ -12,7 +12,7 @@ using UnivercityDB.Data;
 namespace UnivercityDB.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231224195207_InitialCreate")]
+    [Migration("20231225131008_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using UnivercityDB.Components;
 using UnivercityDB.Data;
+using UnivercityDB.Services.FacultyService;
+using UnivercityDB.Services.GroupService;
+using UnivercityDB.Services.StudentService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,13 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<DataContext>(
     option => option.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Scoped);
+
+builder.Services.AddScoped<IFacultyService, FacultyService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+
+builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<DialogService>();
 
 var app = builder.Build();
 

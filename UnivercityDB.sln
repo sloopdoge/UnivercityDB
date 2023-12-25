@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnivercityDB", "UnivercityDB\UnivercityDB\UnivercityDB.csproj", "{DDE98DA6-BAB3-4AFF-BB64-486B4663BAC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnivercityDB", "UnivercityDB\UnivercityDB\UnivercityDB.csproj", "{DDE98DA6-BAB3-4AFF-BB64-486B4663BAC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnivercityDB.Client", "UnivercityDB\UnivercityDB.Client\UnivercityDB.Client.csproj", "{B2E92FB8-10E6-4F79-B8AA-3FF595ED2788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnivercityDB.Client", "UnivercityDB\UnivercityDB.Client\UnivercityDB.Client.csproj", "{B2E92FB8-10E6-4F79-B8AA-3FF595ED2788}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
