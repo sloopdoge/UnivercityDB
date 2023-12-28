@@ -1,0 +1,106 @@
+﻿@inject IGroupService GroupService
+@inject IFacultyService FacultyService
+@inject DialogService DialogService
+
+@if (id == null)
+{
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Create new group</RadzenText>
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Edit @group.Title</RadzenText>
+}
+<RadzenTemplateForm TItem="UnivercityDB.Entities.Group" Data=@group Submit=@HandleSubmit>
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="5">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Title">
+                <RadzenTextBox Name="Title" @bind-Value="@group.Title" />
+                <RadzenRequiredValidator Component="Title" Text="Title is requred" Popup=@true Style="position: absolute" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Faculty">
+                <RadzenDropDown Name="FacultyID" @bind-Value="@group.FacultyID" Data=@_faculties TextProperty="Title"
+                ValueProperty="FacultyID" Placeholder="Select faculty" Style="width: 100%; max-width: 300px;"/>
+                <RadzenRequiredValidator Component="FacultyID" Text="Faculty is requred" Popup=@true Style="position: absolute" />
+            </RadzenFormField>
+        </RadzenStack>
+        @if (id is not null)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+                <RadzenFormField Text="Students number" Style="width: 200px; height: 30px">
+                    <RadzenText>@group.StudentsNumber</RadzenText>
+                </RadzenFormField>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+                <RadzenFormField Text="Average mark" Style="width: 200px; height: 30px">
+                    <RadzenText>@group.AverageStudentsMark</RadzenText>
+                </RadzenFormField>
+            </RadzenStack>
+        }
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+            <RadzenButton Text="@_btnText" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    private List<Faculty> _faculties = new List<Faculty>();
+
+    [SupplyParameterFromForm]
+    UnivercityDB.Entities.Group group { get; set; } = new UnivercityDB.Entities.Group();
+
+    private string _btnText = String.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _btnText = id == null ? "Create" : "Edit";
+        var result = await FacultyService.GetFaculties();
+
+        foreach (var faculty in result)
+            _faculties.Add(faculty);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id is not null)
+        {
+            var result = await GroupService.GetGroup((int)id);
+
+            if (result is not null)
+                group = result;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (id is null)
+        {
+            var result = await GroupService.CreateGroup(group);
+
+            if (result is not null)
+                await OpenMessageDialog("Success", "Group successfully created");
+            else
+                await OpenMessageDialog("Error", "Group not created");
+        }
+        else
+        {
+            var result = await GroupService.UpdateGroup((int)id, group);
+
+            if (result is not null)
+                await OpenMessageDialog("Success", "Group successfully updated");
+            else
+                await OpenMessageDialog("Error", "Group not updated");
+        }
+    }
+
+    private async Task OpenMessageDialog(string headerTitle, string message) =>
+        await DialogService.OpenAsync<MessageDialog>(headerTitle,
+            new Dictionary<string, object> {
+                { "message", message }
+                },
+            new DialogOptions() { Width = "300px", Height = "200px", Resizable = true, Draggable = true });
+}

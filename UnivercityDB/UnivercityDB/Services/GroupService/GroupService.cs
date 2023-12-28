@@ -43,7 +43,6 @@ namespace UnivercityDB.Services.GroupService
                 if (dbGroup == null)
                 {
                     throw new Exception($"There is no group with this ID: {groupId}");
-                    return false;
                 }
 
                 _context.Remove(dbGroup);
@@ -72,7 +71,6 @@ namespace UnivercityDB.Services.GroupService
                 if (dbGroup == null)
                 {
                     throw new Exception($"There is no group with this ID: {groupId}");
-                    return null;
                 }
 
                 return dbGroup;
@@ -116,11 +114,10 @@ namespace UnivercityDB.Services.GroupService
                 if (dbGroup == null)
                 {
                     throw new Exception($"There is no group with this ID: {groupId}");
-                    return null;
                 }
 
                 dbGroup.FacultyID = group.FacultyID;
-                dbGroup.GroupTitle = group.GroupTitle;
+                dbGroup.Title = group.Title;
 
                 await _context.SaveChangesAsync();
 

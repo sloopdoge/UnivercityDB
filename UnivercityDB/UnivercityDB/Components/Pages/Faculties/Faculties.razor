@@ -1,5 +1,5 @@
 ﻿@page "/faculties"
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
 @attribute [StreamRendering(true)]
 @inject IFacultyService FacultyService
 @inject DialogService DialogService
@@ -22,9 +22,15 @@ else
 {
     <RadzenDataGrid Data="@faculties" TItem="Faculty" ColumnWidth="700px">
         <Columns>
-            <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="Faculty" Property="FacultyTitle" Title="Title" Frozen="true" Width="300px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="300px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Faculty" Property="Title" Title="Title" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="300px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="Action" Width="100px" TextAlign="TextAlign.Center">
+                <Template Context="faculty">
+                    <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Click="() => OpenFacultyDialog(faculty.FacultyID)" />
+                    <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => OpenDeleteAlert(faculty)" />
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 }
@@ -37,8 +43,15 @@ else
         faculties = await FacultyService.GetFaculties();
     }
 
-    private async Task OpenFacultyDialog(int? id) => 
-        await DialogService.OpenAsync<FacultyDetailsPage>("FacultyDetailsPage",
+    private async Task OpenFacultyDialog(int? id) =>
+        await DialogService.OpenAsync<FacultyDetailsPage>("Faculty Details",
             new Dictionary<string, object> { { "id", id } },
             new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
+
+    private async Task OpenDeleteAlert(Faculty faculty) =>
+        await DialogService.OpenAsync<FacultyDeleteAlert>($"Are you sure to delete {faculty.Title}?",
+            new Dictionary<string, object> {
+                { "facultyToDelete", faculty }
+                },
+            new DialogOptions() { Width = "450px", Height = "300px", Resizable = true, Draggable = true });
 }

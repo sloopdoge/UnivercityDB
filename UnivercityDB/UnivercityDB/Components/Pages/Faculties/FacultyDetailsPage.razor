@@ -1,4 +1,5 @@
 ﻿@inject IFacultyService FacultyService
+@inject DialogService DialogService
 
 @if (id == null)
 {
@@ -8,23 +9,24 @@ else
 {
     <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Edit @faculty.Title</RadzenText>
 }
-<EditForm Model="faculty" OnSubmit="HandleSubmit">
-    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="3">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1">
-            <RadzenFormField Text="Faculty title">
-                <RadzenTextBox @bind-Value="@faculty.Title"/>
+<RadzenTemplateForm TItem="Faculty" Data=@faculty Submit=@HandleSubmit>
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="5">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Title">
+                <RadzenTextBox Name="Title" @bind-Value="@faculty.Title"/>
+                <RadzenRequiredValidator Component="Title" Text="Title is requred" Popup=@true Style="position: absolute"/>
             </RadzenFormField>
         </RadzenStack>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1">
-            <RadzenFormField Text="Faculty title">
-                <RadzenTextArea @bind-Value="@faculty.Note" />
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Note">
+                <RadzenTextArea Name="Note" @bind-Value="@faculty.Note" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
             <RadzenButton Text="@_btnText" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary"/>
         </RadzenStack>
     </RadzenStack>
-</EditForm>
+</RadzenTemplateForm>
 
 @code {
     [Parameter]
@@ -51,15 +53,32 @@ else
         }
     }
 
-    async Task HandleSubmit()
+    private async Task HandleSubmit()
     {
         if (id is null)
         {
-            await FacultyService.CreateFaculty(faculty);
+            var result = await FacultyService.CreateFaculty(faculty);
+
+            if (result is not null)
+                await OpenMessageDialog("Success", "Faculty successfully created");
+            else 
+                await OpenMessageDialog("Error", "Faculty not created");
         }
         else
         {
-            await FacultyService.UpdateFaculty((int)id, faculty);
+            var result = await FacultyService.UpdateFaculty((int)id, faculty);
+
+            if (result is not null)
+                await OpenMessageDialog("Success", "Faculty successfully updated");
+            else
+                await OpenMessageDialog("Error", "Faculty not updated");
         }
     }
+
+    private async Task OpenMessageDialog(string headerTitle, string message) =>
+        await DialogService.OpenAsync<MessageDialog>(headerTitle,
+            new Dictionary<string, object> {
+                { "message", message }
+            },
+            new DialogOptions() { Width = "300px", Height = "200px", Resizable = true, Draggable = true });
 }

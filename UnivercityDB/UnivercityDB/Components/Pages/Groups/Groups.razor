@@ -1,8 +1,63 @@
 ﻿@page "/groups"
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@attribute [StreamRendering(true)]
+@inject IGroupService GroupService
+@inject IFacultyService FacultyService
+@inject DialogService DialogService
 
-<h3>Groups</h3>
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Groups</RadzenText>
+    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="() => OpenGroupDialog(null)" />
+</RadzenStack>
+
+
+@if (groups == null)
+{
+    <span>Loading...</span>
+}
+else if (groups.Count == 0)
+{
+    <span>No groups found</span>
+}
+else
+{
+    <RadzenDataGrid Data="@groups" TItem="UnivercityDB.Entities.Group" ColumnWidth="700px">
+        <Columns>
+            <RadzenDataGridColumn TItem="UnivercityDB.Entities.Group" Property="GroupID" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="UnivercityDB.Entities.Group" Property="Title" Title="Title" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="UnivercityDB.Entities.Group" Property="Faculty.Title" Title="Faculty title" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="UnivercityDB.Entities.Group" Property="StudentsNumber" Title="Students number" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="UnivercityDB.Entities.Group" Property="AverageStudentsMark" Title="Average students mark" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="UnivercityDB.Entities.Group" Property="GroupID" Title="Action" Width="100px" TextAlign="TextAlign.Center">
+                <Template Context="group">
+                    <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Click="() => OpenGroupDialog(group.GroupID)" />
+                    <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => OpenDeleteAlert(group)" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
 
 @code {
+    private List<UnivercityDB.Entities.Group> groups { get; set; } = null;
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FacultyService.GetFaculties();
+
+        groups = await GroupService.GetGroups();       
+    }
+
+    private async Task OpenGroupDialog(int? id) =>
+        await DialogService.OpenAsync<GroupDetailsPage>("Group Details",
+            new Dictionary<string, object> { { "id", id } },
+            new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
+
+    private async Task OpenDeleteAlert(UnivercityDB.Entities.Group group) =>
+        await DialogService.OpenAsync<GroupDeleteAlert>($"Are you sure to delete {group.Title}?",
+            new Dictionary<string, object> {
+                { "groupToDelete", group }
+                    },
+            new DialogOptions() { Width = "450px", Height = "300px", Resizable = true, Draggable = true });
 }

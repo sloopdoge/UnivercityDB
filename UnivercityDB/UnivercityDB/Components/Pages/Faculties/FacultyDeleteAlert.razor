@@ -1,0 +1,37 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@inject IFacultyService FacultyService
+@inject DialogService DialogService
+
+<UnivercityDB.Components.Pages.Shared.RefreshPageScript @ref="_refreshPageScript"/>
+
+<RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="5">
+    <RadzenText>Delete @facultyToDelete.Title</RadzenText>
+    <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Text="Yes" Click="DeleteFaculty" />
+    <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Text="No" Click="RefreshPage" />
+</RadzenStack>
+
+    @code {
+    [Parameter]
+    public Faculty facultyToDelete { get; set; }
+
+    private RefreshPageScript? _refreshPageScript;
+
+    private void RefreshPage() => _refreshPageScript.RefreshPageAsync();
+
+    private async Task DeleteFaculty()
+    {
+        var result = await FacultyService.DeleteFaculty(facultyToDelete.FacultyID);
+
+        if (result)
+            await OpenMessageDialog("Success", $"Faculty {facultyToDelete.Title} succesfully deleted");
+        else
+            await OpenMessageDialog("Error", $"Faculty {facultyToDelete.Title} not deleted");
+    }
+
+    private async Task OpenMessageDialog(string headerTitle, string message) =>
+        await DialogService.OpenAsync<MessageDialog>(headerTitle,
+            new Dictionary<string, object> {
+                { "message", message }
+                },
+            new DialogOptions() { Width = "300px", Height = "200px", Resizable = true, Draggable = true });
+}

@@ -1,0 +1,19 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@inject NavigationManager NavigationManager
+@using Pages.Shared
+
+<RefreshPageScript @ref="_refreshPageScript" />
+
+<RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="5">
+    <RadzenText Text="@message"/>
+    <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Success" Text="OK" Click="RefreshPage" />
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public string message { get; set; }
+
+    private RefreshPageScript? _refreshPageScript;
+
+    private void RefreshPage() => _refreshPageScript.RefreshPageAsync();
+}

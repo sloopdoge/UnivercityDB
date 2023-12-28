@@ -32,10 +32,10 @@ namespace UnivercityDB.Migrations
                 {
                     GroupID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GroupTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FacultyID = table.Column<int>(type: "int", nullable: false),
-                    StudentsNumber = table.Column<int>(type: "int", nullable: false),
-                    AverageStudentsMark = table.Column<double>(type: "float", nullable: false)
+                    StudentsNumber = table.Column<int>(type: "int", nullable: true),
+                    AverageStudentsMark = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {

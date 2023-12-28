@@ -44,7 +44,6 @@ namespace UnivercityDB.Services.FacultyService
                 if(dbFaculty == null) 
                 {
                     throw new Exception($"There is no faculty with this ID: {facultyId}");
-                    return false;
                 }
 
                 _context.Remove(dbFaculty);
@@ -93,7 +92,6 @@ namespace UnivercityDB.Services.FacultyService
                 if(dbFaculty == null)
                 {
                     throw new Exception($"There is no faculty with this ID: {facultyId}");
-                    return null;
                 }
 
                 return dbFaculty;
@@ -120,7 +118,6 @@ namespace UnivercityDB.Services.FacultyService
                 if( dbFaculty == null )
                 {
                     throw new Exception($"There is no faculty with this ID: {facultyId}");
-                    return null;
                 }
 
                 dbFaculty.Title = faculty.Title;

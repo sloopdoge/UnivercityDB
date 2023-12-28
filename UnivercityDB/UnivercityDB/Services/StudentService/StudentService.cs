@@ -44,7 +44,6 @@ namespace UnivercityDB.Services.StudentService
                 if (dbStudent == null)
                 {
                     throw new Exception($"There is no student with this ID: {studentId}");
-                    return false;
                 }
 
                 _context.Remove(dbStudent);
@@ -73,7 +72,6 @@ namespace UnivercityDB.Services.StudentService
                 if (dbStudent == null)
                 {
                     throw new Exception($"There is no student with this ID: {studentId}");
-                    return null;
                 }
 
                 return dbStudent;
@@ -117,7 +115,6 @@ namespace UnivercityDB.Services.StudentService
                 if (dbStudent == null)
                 {
                     throw new Exception($"There is no student with this ID: {studentId}");
-                    return null;
                 }
 
                 dbStudent.LastName = student.LastName;
