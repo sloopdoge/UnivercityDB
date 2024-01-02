@@ -1,5 +1,37 @@
-﻿<h3>StudentDeleteAlert</h3>
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@inject IStudentService StudentService
+@inject DialogService DialogService
 
-@code {
+<UnivercityDB.Components.Pages.Shared.RefreshPageScript @ref="_refreshPageScript" />
 
+<RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="5">
+    <RadzenText>Delete @studentToDelete.LastName @studentToDelete.FirstName</RadzenText>
+        <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Text="Yes" Click="DeleteStudent" />
+        <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Text="No" Click="RefreshPage" />
+    </RadzenStack>
+
+    @code {
+    [Parameter]
+    public Student studentToDelete { get; set; }
+
+    private RefreshPageScript? _refreshPageScript;
+
+    private void RefreshPage() => _refreshPageScript.RefreshPageAsync();
+
+    private async Task DeleteStudent()
+    {
+        var result = await StudentService.DeleteStudent(studentToDelete.StudentID);
+
+        if (result)
+            await OpenMessageDialog("Success", $"Student {studentToDelete.LastName} {studentToDelete.FirstName} succesfully deleted");
+        else
+            await OpenMessageDialog("Error", $"Student {studentToDelete.LastName} {studentToDelete.FirstName} not deleted");
+    }
+
+    private async Task OpenMessageDialog(string headerTitle, string message) =>
+        await DialogService.OpenAsync<MessageDialog>(headerTitle,
+            new Dictionary<string, object> {
+                { "message", message }
+                        },
+            new DialogOptions() { Width = "300px", Height = "200px", Resizable = true, Draggable = true });
 }

@@ -12,7 +12,7 @@ using UnivercityDB.Data;
 namespace UnivercityDB.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231228151350_InitialCreate")]
+    [Migration("20240102135906_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -87,11 +87,8 @@ namespace UnivercityDB.Migrations
                     b.Property<double?>("AverageMark")
                         .HasColumnType("float");
 
-                    b.Property<DateOnly>("CreateDate")
-                        .HasColumnType("date");
-
-                    b.Property<int?>("FacultyID")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -105,8 +102,6 @@ namespace UnivercityDB.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("StudentID");
-
-                    b.HasIndex("FacultyID");
 
                     b.HasIndex("GroupID");
 
@@ -126,17 +121,10 @@ namespace UnivercityDB.Migrations
 
             modelBuilder.Entity("UnivercityDB.Entities.Student", b =>
                 {
-                    b.HasOne("UnivercityDB.Entities.Faculty", "Faculty")
-                        .WithMany("Students")
-                        .HasForeignKey("FacultyID")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("UnivercityDB.Entities.Group", "Group")
                         .WithMany("Students")
                         .HasForeignKey("GroupID")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Faculty");
 
                     b.Navigation("Group");
                 });
@@ -144,8 +132,6 @@ namespace UnivercityDB.Migrations
             modelBuilder.Entity("UnivercityDB.Entities.Faculty", b =>
                 {
                     b.Navigation("Groups");
-
-                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("UnivercityDB.Entities.Group", b =>

@@ -22,12 +22,6 @@ namespace UnivercityDB.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Student>()
-                .HasOne(s => s.Faculty)
-                .WithMany(f => f.Students)
-                .HasForeignKey(s => s.FacultyID)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Student>()
                 .HasOne(s => s.Group)
                 .WithMany(g => g.Students)
                 .HasForeignKey(s => s.GroupID)

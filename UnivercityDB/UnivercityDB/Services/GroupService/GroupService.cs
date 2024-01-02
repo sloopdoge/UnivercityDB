@@ -73,6 +73,8 @@ namespace UnivercityDB.Services.GroupService
                     throw new Exception($"There is no group with this ID: {groupId}");
                 }
 
+                await UpdateGroupStatistics(dbGroup);
+
                 return dbGroup;
             }
             catch (DbUpdateException ex)
@@ -91,7 +93,11 @@ namespace UnivercityDB.Services.GroupService
         {
             try
             {
-                return await _context.Groups.ToListAsync();
+                List<Group> groups = await _context.Groups.ToListAsync();
+
+                await UpdateGroupStatistics(groups);
+
+                return groups;
             }
             catch (DbUpdateException ex)
             {
@@ -133,6 +139,39 @@ namespace UnivercityDB.Services.GroupService
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return null;
             }
+        }
+
+        private async Task UpdateGroupStatistics(Group group)
+        {
+            var groupStats = await _context.Groups
+                .Include(g => g.Students)
+                .FirstOrDefaultAsync(g => g.GroupID == group.GroupID);
+
+            if (group is not null)
+            {
+                group.StudentsNumber = groupStats.Students.Count();
+                group.AverageStudentsMark = groupStats.Students.Average(s => s.AverageMark);
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task UpdateGroupStatistics(List<Group> groups)
+        {
+            foreach (var group in groups)
+            {
+                var groupStats = await _context.Groups
+                    .Include(g => g.Students)
+                    .FirstOrDefaultAsync(g => g.GroupID == group.GroupID);
+
+                if (groupStats is not null)
+                {
+                    group.StudentsNumber = groupStats.Students.Count();
+                    group.AverageStudentsMark = groupStats.Students.Average(s => s.AverageMark);
+                }
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

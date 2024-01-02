@@ -22,7 +22,7 @@ else
             <RadzenFormField Text="Faculty">
                 <RadzenDropDown Name="FacultyID" @bind-Value="@group.FacultyID" Data=@_faculties TextProperty="Title"
                 ValueProperty="FacultyID" Placeholder="Select faculty" Style="width: 100%; max-width: 300px;"/>
-                <RadzenRequiredValidator Component="FacultyID" Text="Faculty is requred" Popup=@true Style="position: absolute" />
+                <RadzenRequiredValidator Component="Title" Text="Faculty is requred" Popup=@true Style="position: absolute" />
             </RadzenFormField>
         </RadzenStack>
         @if (id is not null)

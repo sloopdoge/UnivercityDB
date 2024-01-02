@@ -54,22 +54,15 @@ namespace UnivercityDB.Migrations
                 {
                     StudentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CreateDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FacultyID = table.Column<int>(type: "int", nullable: true),
                     GroupID = table.Column<int>(type: "int", nullable: true),
                     AverageMark = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Students", x => x.StudentID);
-                    table.ForeignKey(
-                        name: "FK_Students_Faculties_FacultyID",
-                        column: x => x.FacultyID,
-                        principalTable: "Faculties",
-                        principalColumn: "FacultyID",
-                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Students_Groups_GroupID",
                         column: x => x.GroupID,
@@ -81,11 +74,6 @@ namespace UnivercityDB.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_FacultyID",
                 table: "Groups",
-                column: "FacultyID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_FacultyID",
-                table: "Students",
                 column: "FacultyID");
 
             migrationBuilder.CreateIndex(

@@ -1,8 +1,65 @@
 ﻿@page "/students"
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@attribute [StreamRendering(true)]
+@inject IGroupService GroupService
+@inject IStudentService StudentService
+@inject DialogService DialogService
 
-<h3>Students</h3>
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Students</RadzenText>
+    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="() => OpenGroupDialog(null)" />
+</RadzenStack>
+
+
+@if (_students == null)
+{
+    <span>Loading...</span>
+}
+else if (_students.Count == 0)
+{
+    <span>No students found</span>
+}
+else
+{
+    <RadzenDataGrid Data="@_students" TItem="Student" ColumnWidth="700px">
+        <Columns>
+            <RadzenDataGridColumn TItem="Student" Property="StudentID" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Student" Property="CreateDate" Title="Created Date" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Student" Property="LastName" Title="Lastname" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Student" Property="FirstName" Title="Firstname" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Student" Property="Group.Title" Title="Group Title" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Student" Property="AverageMark" Title="Average students mark" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Student" Property="StudentID" Title="Action" Width="100px" TextAlign="TextAlign.Center">
+                <Template Context="student">
+                    <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Click="() => OpenGroupDialog(student.StudentID)" />
+                    <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => OpenDeleteAlert(student)" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
 
 @code {
- 
+    private List<Student> _students { get; set; } = null;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GroupService.GetGroups();
+
+        _students = await StudentService.GetStudents();
+    }
+
+    private async Task OpenGroupDialog(int? id) =>
+        await DialogService.OpenAsync<StudentDetailsPage>("Student Details",
+            new Dictionary<string, object> { { "id", id } },
+            new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
+
+    private async Task OpenDeleteAlert(Student student) =>
+        await DialogService.OpenAsync<StudentDeleteAlert>($"Are you sure to delete {student.LastName} {student.FirstName}?",
+            new Dictionary<string, object> {
+                { "studentToDelete", student }
+                        },
+            new DialogOptions() { Width = "450px", Height = "300px", Resizable = true, Draggable = true });
 }
+

@@ -1,5 +1,114 @@
-﻿<h3>StudentDetailsPage</h3>
+﻿@inject IGroupService GroupService
+@inject IStudentService StudentService
+@inject DialogService DialogService
+
+@if (id is null)
+{
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Create new student</RadzenText>
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start">Edit @student.LastName @student.FirstName</RadzenText>
+}
+<RadzenTemplateForm TItem="Student" Data=@student Submit=@HandleSubmit>
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="5">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Date created">
+                 <RadzenDatePicker Name="DateCreated" TValue="DateTime?" Value="@_createDate" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Lastname">
+                <RadzenTextBox Name="Lastname" @bind-Value="@student.LastName" />
+                <RadzenRequiredValidator Component="Lastname" Text="Lastname is requred" Popup=@true Style="position: absolute" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Firstname">
+                <RadzenTextBox Name="Firstname" @bind-Value="@student.FirstName" />
+                <RadzenRequiredValidator Component="Firstname" Text="Firstname is requred" Popup=@true Style="position: absolute" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Group Title">
+                <RadzenDropDown Name="GroupTitle" @bind-Value="@student.GroupID" Data=@_groups TextProperty="Title"
+                                ValueProperty="GroupID" Placeholder="Select group" Style="width: 100%; max-width: 300px;" />               
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+            <RadzenFormField Text="Average Mark">
+                <RadzenNumeric Name="AverageMark" @bind-Value="@student.AverageMark" />               
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+            <RadzenButton Text="@_btnText" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
 
 @code {
+    [Parameter]
+    public int? id { get; set; }
 
+    private List<UnivercityDB.Entities.Group> _groups = new List<UnivercityDB.Entities.Group>();
+
+    [SupplyParameterFromForm]
+    Student student { get; set; } = new Student();
+
+    private DateTime _createDate = DateTime.Now;
+
+    private string _btnText = String.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _btnText = id == null ? "Create" : "Edit";
+        var result = await GroupService.GetGroups();
+
+        foreach (var group in result)
+            _groups.Add(group);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id is not null)
+        {
+            var result = await StudentService.GetStudent((int)id);
+
+            if (result is not null)
+            {
+                student = result;
+                _createDate = result.CreateDate;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (id is null)
+        {
+            student.CreateDate = _createDate;
+            var result = await StudentService.CreateStudent(student);
+
+            if (result is not null)
+                await OpenMessageDialog("Success", "Student successfully created");
+            else
+                await OpenMessageDialog("Error", "Student not created");
+        }
+        else
+        {
+            var result = await StudentService.UpdateStudent((int)id, student);
+
+            if (result is not null)
+                await OpenMessageDialog("Success", "Student successfully updated");
+            else
+                await OpenMessageDialog("Error", "Student not updated");
+        }
+    }
+
+    private async Task OpenMessageDialog(string headerTitle, string message) =>
+        await DialogService.OpenAsync<MessageDialog>(headerTitle,
+            new Dictionary<string, object> {
+                { "message", message }
+                    },
+            new DialogOptions() { Width = "300px", Height = "200px", Resizable = true, Draggable = true });
 }

@@ -117,9 +117,9 @@ namespace UnivercityDB.Services.StudentService
                     throw new Exception($"There is no student with this ID: {studentId}");
                 }
 
+                dbStudent.CreateDate = student.CreateDate;
                 dbStudent.LastName = student.LastName;
                 dbStudent.FirstName = student.FirstName;
-                dbStudent.FacultyID = student.FacultyID;
                 dbStudent.GroupID = student.GroupID;
                 dbStudent.AverageMark = student.AverageMark;
 

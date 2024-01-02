@@ -2,6 +2,7 @@
 @rendermode @(new InteractiveServerRenderMode(prerender: true))
 @attribute [StreamRendering(true)]
 @inject IFacultyService FacultyService
+@inject IGroupService GroupService
 @inject DialogService DialogService
 
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" JustifyContent="JustifyContent.SpaceBetween">
@@ -24,11 +25,23 @@ else
         <Columns>
             <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
             <RadzenDataGridColumn TItem="Faculty" Property="Title" Title="Title" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
+@*             <RadzenDataGridColumn TItem="Faculty" Title="Chairs" Frozen="true" Width="200px" TextAlign="TextAlign.Start">
+                <Template Context="faculty">
+                    @if (faculty.Chairs is not null)
+                    {
+                        @foreach (var chair in faculty.Chairs)
+                        {
+                            <RadzenText>•@chair</RadzenText>
+                        }
+                    }
+                </Template>
+            </RadzenDataGridColumn> *@
             <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="300px" TextAlign="TextAlign.Start" />
             <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="Action" Width="100px" TextAlign="TextAlign.Center">
                 <Template Context="faculty">
                     <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Click="() => OpenFacultyDialog(faculty.FacultyID)" />
                     <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => OpenDeleteAlert(faculty)" />
+                    <RadzenButton Text="Diagram" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Click="() => OpenLineChrt(faculty)" />
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -41,6 +54,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         faculties = await FacultyService.GetFaculties();
+        await GroupService.GetGroups();
     }
 
     private async Task OpenFacultyDialog(int? id) =>
@@ -54,4 +68,11 @@ else
                 { "facultyToDelete", faculty }
                 },
             new DialogOptions() { Width = "450px", Height = "300px", Resizable = true, Draggable = true });
+
+    private async Task OpenLineChrt(Faculty faculty) =>
+        await DialogService.OpenAsync<FacultyGroupsLineChart>($"Average students marks by groups in {faculty.Title}",
+            new Dictionary<string, object> {
+                { "faculty", faculty }
+                    },
+            new DialogOptions() { Width = "1000px", Height = "500px", Resizable = true, Draggable = true });
 }

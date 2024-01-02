@@ -1,0 +1,35 @@
+﻿@inject IFacultyService FacultyService
+
+<RadzenStack>
+            <RadzenCard Style="display: flex; align-items: center; gap: 0.5rem">
+                <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox>
+                <RadzenLabel Text="Smooth" Component="smooth" Style="margin-right: 1rem;" />
+                <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+                <RadzenLabel Text="Show Data Labels" Component="dataLabels" Style="margin-right: 1rem;" />
+                <RadzenCheckBox @bind-Value="@showMarkers" Name="markers"></RadzenCheckBox>
+                <RadzenLabel Text="Show Markers" Component="markers" />
+            </RadzenCard>
+            <RadzenChart>
+                <RadzenLineSeries Smooth="@smooth" Data="@faculty.Groups" CategoryProperty="Title" Title="@faculty.Title" ValueProperty="AverageStudentsMark">
+                    <RadzenMarkers MarkerType="MarkerType.Square" />
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </RadzenLineSeries>
+                <RadzenCategoryAxis Padding="20"/>
+                <RadzenValueAxis>
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="Average Marks" />
+                </RadzenValueAxis>
+            </RadzenChart>
+</RadzenStack>
+
+
+@code {
+    [Parameter]
+    public Faculty? faculty { get; set; }
+
+    bool smooth = false;
+    bool showDataLabels = false;
+    bool showMarkers = true;
+
+
+}

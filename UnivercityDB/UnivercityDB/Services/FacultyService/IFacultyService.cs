@@ -9,5 +9,6 @@ namespace UnivercityDB.Services.FacultyService
         Task<Faculty?> CreateFaculty(Faculty faculty);
         Task<Faculty?> UpdateFaculty(int facultyId, Faculty faculty);
         Task<bool> DeleteFaculty(int facultyId); 
+
     }
 }

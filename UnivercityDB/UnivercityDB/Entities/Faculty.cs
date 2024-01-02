@@ -11,6 +11,5 @@ namespace UnivercityDB.Entities
         public string? Note { get; set; }
 
         public virtual List<Group> Groups { get; set; }
-        public virtual List<Student> Students { get; set; }
     }
 }
