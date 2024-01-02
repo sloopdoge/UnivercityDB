@@ -13,30 +13,36 @@ else
 }
 <RadzenTemplateForm TItem="Faculty" Data=@faculty Submit=@HandleSubmit>
     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="5">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
-            <RadzenFormField Text="Title">
-                <RadzenTextBox Name="Title" @bind-Value="@faculty.Title"/>
-                <RadzenRequiredValidator Component="Title" Text="Title is requred" Popup=@true Style="position: absolute"/>
-            </RadzenFormField>
-        </RadzenStack>
-@*         <RadzenCard>
-            <RadzenText Text="Chairs" TextStyle="TextStyle.H6"/>
+        <RadzenCard>
+           <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+               <RadzenFormField Text="Title">
+                   <RadzenTextBox Name="Title" @bind-Value="@faculty.Title"/>
+                   <RadzenRequiredValidator Component="Title" Text="Title is requred" Popup=@true Style="position: absolute"/>
+               </RadzenFormField>
+           </RadzenStack>
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText Text="Chairs"/>
             <RadzenStack Orientation="Orientation.Vertical" Gap="3" AlignItems="AlignItems.Start">
-                @for(int i = 0; i < _chairs.Count; i++)
+                @if (_chairs is not null)
                 {
-                    <RadzenFormField Text="Title">
-                        <RadzenTextBox Name="Title" @bind-Value="@_chairs[i]" />                       
-                    </RadzenFormField>
-                    <RadzenButton Text="Remove chair" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Light" Click="() => RemoveChair(i)" />
+                    @for (int i = 0; i < _chairs.Count; i++)
+                    {
+                        <RadzenTextBox Name="ChairtTitle" @bind-Value="@_chairs[i].ChairName" Placeholder="Chair name"/>
+                        <RadzenButton Text="Remove chair" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => RemoveChair(i)" />
+                    }
+
                 }
-                <RadzenButton Text="Add chair" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Light" Click="() => AddChair()"/>
+                <RadzenButton Text="Add chair" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" Click="() => AddChair()" />
             </RadzenStack>
-        </RadzenCard> *@
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
-            <RadzenFormField Text="Note">
-                <RadzenTextArea Name="Note" @bind-Value="@faculty.Note" />
-            </RadzenFormField>
-        </RadzenStack>
+        </RadzenCard>
+        <RadzenCard>
+          <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+              <RadzenFormField Text="Note">
+                  <RadzenTextArea Name="Note" @bind-Value="@faculty.Note" />
+              </RadzenFormField>
+          </RadzenStack>
+        </RadzenCard>
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
             <RadzenButton Text="@_btnText" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary"/>
         </RadzenStack>
@@ -50,32 +56,13 @@ else
     [SupplyParameterFromForm]
     Faculty faculty { get; set; } = new Faculty();
 
-    // private List<string>? _chairs { get; set; } = null;
+    private List<Chair>? _chairs = new List<Chair>();
 
     private string _btnText = String.Empty;
-
-    // private void AddChair()
-    // {
-    //     if (_chairs is null) 
-    //     {
-    //         _chairs = new List<string>();
-    //     }
-
-    //     _chairs.Add(string.Empty);
-    // }
-
-    // private void RemoveChair(int index)
-    // {
-    //     if (_chairs != null && index >= 0 && index < _chairs.Count)
-    //     {
-    //         _chairs.RemoveAt(index);
-    //     }
-    // }
 
     protected override void OnInitialized()
     {
         _btnText = id == null ? "Create" : "Edit";
-
     }
 
     protected override async Task OnParametersSetAsync()
@@ -87,6 +74,7 @@ else
             if (result is not null)
             {
                 faculty = result;
+                _chairs = result.Chairs;
             }
         }
     }
@@ -95,6 +83,13 @@ else
     {
         if (id is null)
         {
+            foreach(var chair in _chairs)
+            {
+                if (chair.ChairName is not null)
+                {
+                    faculty.Chairs.Add(chair);
+                }
+            }
             var result = await FacultyService.CreateFaculty(faculty);
 
             if (result is not null)
@@ -104,6 +99,13 @@ else
         }
         else
         {
+            foreach (var chair in _chairs)
+            {
+                if (chair.ChairName is not null)
+                {
+                    faculty.Chairs.Add(chair);
+                }
+            }
             var result = await FacultyService.UpdateFaculty((int)id, faculty);
 
             if (result is not null)
@@ -119,4 +121,14 @@ else
                 { "message", message }
             },
             new DialogOptions() { Width = "300px", Height = "200px", Resizable = true, Draggable = true });
+
+    private void AddChair()
+    {
+        _chairs.Add(new Chair());
+    }
+
+    private void RemoveChair(int index)
+    {
+        _chairs.RemoveAt(index);
+    }
 }

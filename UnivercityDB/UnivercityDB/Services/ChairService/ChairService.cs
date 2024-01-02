@@ -2,25 +2,25 @@
 using UnivercityDB.Data;
 using UnivercityDB.Entities;
 
-namespace UnivercityDB.Services.FacultyService
+namespace UnivercityDB.Services.ChairService
 {
-    public class FacultyService : IFacultyService
+    public class ChairService : IChairService
     {
         private readonly DataContext _context;
 
-        public FacultyService(DataContext context)
+        public ChairService(DataContext context)
         {
             _context = context;
-        }   
+        }
 
-        public async Task<Faculty?> CreateFaculty(Faculty faculty)
+        public async Task<Chair> CreateChair(Chair chair)
         {
             try
             {
-                _context.Add(faculty);
+                _context.Add(chair);
                 await _context.SaveChangesAsync();
 
-                return faculty;
+                return chair;
 
             }
             catch (DbUpdateException ex)
@@ -28,25 +28,25 @@ namespace UnivercityDB.Services.FacultyService
                 Console.WriteLine($"An error occurred while updating the database: {ex.Message}");
                 return null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return null;
             }
         }
 
-        public async Task<bool> DeleteFaculty(int facultyId)
+        public async Task<bool> DeleteChair(int chairId)
         {
             try
             {
-                var dbFaculty = await _context.Faculties.FindAsync(facultyId);
+                var dbChair = await _context.Chairs.FindAsync(chairId);
 
-                if(dbFaculty == null) 
+                if (dbChair == null)
                 {
-                    throw new Exception($"There is no faculty with this ID: {facultyId}");
+                    throw new Exception($"There is no chair with this ID: {chairId}");
                 }
 
-                _context.Remove(dbFaculty);
+                _context.Remove(dbChair);
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -64,14 +64,18 @@ namespace UnivercityDB.Services.FacultyService
             }
         }
 
-        public async Task<List<Faculty>> GetFaculties()
+        public async Task<Chair> GetChair(int chairId)
         {
             try
             {
-                var result = await _context.Faculties
-                    .Include(f => f.Chairs)
-                    .ToListAsync();                    ;
-                return await _context.Faculties.ToListAsync();
+                var dbChair = await _context.Chairs.FindAsync(chairId);
+
+                if (dbChair == null)
+                {
+                    throw new Exception($"There is no chair with this ID: {chairId}");
+                }
+
+                return dbChair;
 
             }
             catch (DbUpdateException ex)
@@ -86,20 +90,11 @@ namespace UnivercityDB.Services.FacultyService
             }
         }
 
-        public async Task<Faculty?> GetFaculty(int facultyId)
+        public async Task<List<Chair>> GetChairs()
         {
             try
             {
-                var dbFaculty = await _context.Faculties
-                    .Include(f => f.Chairs)
-                    .FirstOrDefaultAsync(f => f.FacultyID == facultyId);
-
-                if(dbFaculty == null)
-                {
-                    throw new Exception($"There is no faculty with this ID: {facultyId}");
-                }
-
-                return dbFaculty;
+                return await _context.Chairs.ToListAsync();
 
             }
             catch (DbUpdateException ex)
@@ -114,24 +109,21 @@ namespace UnivercityDB.Services.FacultyService
             }
         }
 
-        public async Task<Faculty?> UpdateFaculty(int facultyId, Faculty faculty)
+        public async Task<Chair> UpdateChair(int chairId, Chair chair)
         {
             try
             {
-                var dbFaculty = await _context.Faculties
-                    .Include(f => f.Chairs)
-                    .FirstOrDefaultAsync(f => f.FacultyID == facultyId);
+                var dbChair = await _context.Chairs.FindAsync(chairId);
 
-                if( dbFaculty == null )
+                if (dbChair == null)
                 {
-                    throw new Exception($"There is no faculty with this ID: {facultyId}");
+                    throw new Exception($"There is no chair with this ID: {chairId}");
                 }
 
-                dbFaculty.Title = faculty.Title;
-                dbFaculty.Note = faculty.Note;
+                dbChair.ChairName = chair.ChairName;
 
                 await _context.SaveChangesAsync();
-                return dbFaculty;
+                return dbChair;
 
             }
             catch (DbUpdateException ex)

@@ -22,6 +22,28 @@ namespace UnivercityDB.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("UnivercityDB.Entities.Chair", b =>
+                {
+                    b.Property<int>("ChairId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChairId"));
+
+                    b.Property<string>("ChairName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FacultyID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChairId");
+
+                    b.HasIndex("FacultyID");
+
+                    b.ToTable("Chairs");
+                });
+
             modelBuilder.Entity("UnivercityDB.Entities.Faculty", b =>
                 {
                     b.Property<int>("FacultyID")
@@ -29,9 +51,6 @@ namespace UnivercityDB.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FacultyID"));
-
-                    b.Property<string>("Chairs")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
@@ -105,6 +124,13 @@ namespace UnivercityDB.Migrations
                     b.ToTable("Students");
                 });
 
+            modelBuilder.Entity("UnivercityDB.Entities.Chair", b =>
+                {
+                    b.HasOne("UnivercityDB.Entities.Faculty", null)
+                        .WithMany("Chairs")
+                        .HasForeignKey("FacultyID");
+                });
+
             modelBuilder.Entity("UnivercityDB.Entities.Group", b =>
                 {
                     b.HasOne("UnivercityDB.Entities.Faculty", "Faculty")
@@ -128,6 +154,8 @@ namespace UnivercityDB.Migrations
 
             modelBuilder.Entity("UnivercityDB.Entities.Faculty", b =>
                 {
+                    b.Navigation("Chairs");
+
                     b.Navigation("Groups");
                 });
 

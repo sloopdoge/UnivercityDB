@@ -18,12 +18,30 @@ namespace UnivercityDB.Migrations
                     FacultyID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Chairs = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Faculties", x => x.FacultyID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Chairs",
+                columns: table => new
+                {
+                    ChairId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ChairName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FacultyID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chairs", x => x.ChairId);
+                    table.ForeignKey(
+                        name: "FK_Chairs_Faculties_FacultyID",
+                        column: x => x.FacultyID,
+                        principalTable: "Faculties",
+                        principalColumn: "FacultyID");
                 });
 
             migrationBuilder.CreateTable(
@@ -72,6 +90,11 @@ namespace UnivercityDB.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Chairs_FacultyID",
+                table: "Chairs",
+                column: "FacultyID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Groups_FacultyID",
                 table: "Groups",
                 column: "FacultyID");
@@ -85,6 +108,9 @@ namespace UnivercityDB.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Chairs");
+
             migrationBuilder.DropTable(
                 name: "Students");
 

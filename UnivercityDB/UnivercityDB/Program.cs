@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Radzen;
 using UnivercityDB.Components;
 using UnivercityDB.Data;
+using UnivercityDB.Services.ChairService;
 using UnivercityDB.Services.FacultyService;
 using UnivercityDB.Services.GroupService;
 using UnivercityDB.Services.StudentService;
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<DataContext>(
 builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IChairService, ChairService>();
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<DialogService>();

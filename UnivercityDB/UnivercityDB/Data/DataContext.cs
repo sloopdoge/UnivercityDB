@@ -12,6 +12,7 @@ namespace UnivercityDB.Data
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<Chair> Chairs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

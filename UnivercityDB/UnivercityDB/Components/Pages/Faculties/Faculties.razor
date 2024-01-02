@@ -25,7 +25,7 @@ else
         <Columns>
             <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
             <RadzenDataGridColumn TItem="Faculty" Property="Title" Title="Title" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
-@*             <RadzenDataGridColumn TItem="Faculty" Title="Chairs" Frozen="true" Width="200px" TextAlign="TextAlign.Start">
+            <RadzenDataGridColumn TItem="Faculty" Property="Chairs" Title="Chairs" Frozen="true" Width="200px" TextAlign="TextAlign.Start">
                 <Template Context="faculty">
                     @if (faculty.Chairs is not null)
                     {
@@ -35,7 +35,7 @@ else
                         }
                     }
                 </Template>
-            </RadzenDataGridColumn> *@
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="300px" TextAlign="TextAlign.Start" />
             <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="Action" Width="100px" TextAlign="TextAlign.Center">
                 <Template Context="faculty">
