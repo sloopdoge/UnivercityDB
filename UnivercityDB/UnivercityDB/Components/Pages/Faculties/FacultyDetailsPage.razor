@@ -24,12 +24,12 @@ else
         <RadzenCard>
             <RadzenText Text="Chairs"/>
             <RadzenStack Orientation="Orientation.Vertical" Gap="3" AlignItems="AlignItems.Start">
-                @if (_chairs is not null)
+                @if (faculty.Chairs is not null)
                 {
-                    @for (int i = 0; i < _chairs.Count; i++)
+                    @foreach (var chair in faculty.Chairs)
                     {
-                        <RadzenTextBox Name="ChairtTitle" @bind-Value="@_chairs[i].ChairName" Placeholder="Chair name"/>
-                        <RadzenButton Text="Remove chair" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => RemoveChair(i)" />
+                        <RadzenTextBox Name="ChairtTitle" @bind-Value="@chair.ChairName" Placeholder="Chair name" />
+                        <RadzenButton Text="Remove chair" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => RemoveChair(chair)" />
                     }
 
                 }
@@ -54,9 +54,10 @@ else
     public int? id { get; set; }
 
     [SupplyParameterFromForm]
-    Faculty faculty { get; set; } = new Faculty();
-
-    private List<Chair>? _chairs = new List<Chair>();
+    Faculty faculty { get; set; } = new Faculty
+    {
+        Chairs = new List<Chair>()    
+    };
 
     private string _btnText = String.Empty;
 
@@ -74,7 +75,6 @@ else
             if (result is not null)
             {
                 faculty = result;
-                _chairs = result.Chairs;
             }
         }
     }
@@ -83,13 +83,6 @@ else
     {
         if (id is null)
         {
-            foreach(var chair in _chairs)
-            {
-                if (chair.ChairName is not null)
-                {
-                    faculty.Chairs.Add(chair);
-                }
-            }
             var result = await FacultyService.CreateFaculty(faculty);
 
             if (result is not null)
@@ -99,13 +92,6 @@ else
         }
         else
         {
-            foreach (var chair in _chairs)
-            {
-                if (chair.ChairName is not null)
-                {
-                    faculty.Chairs.Add(chair);
-                }
-            }
             var result = await FacultyService.UpdateFaculty((int)id, faculty);
 
             if (result is not null)
@@ -124,11 +110,12 @@ else
 
     private void AddChair()
     {
-        _chairs.Add(new Chair());
+
+        faculty.Chairs.Add(new Chair());
     }
 
-    private void RemoveChair(int index)
+    private void RemoveChair(Chair chair)
     {
-        _chairs.RemoveAt(index);
+        faculty.Chairs.Remove(chair);
     }
 }

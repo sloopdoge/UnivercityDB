@@ -1,6 +1,6 @@
 ﻿@page "/students"
 @rendermode @(new InteractiveServerRenderMode(prerender: true))
-@attribute [StreamRendering(true)]
+@attribute [StreamRendering(false)]
 @inject IGroupService GroupService
 @inject IStudentService StudentService
 @inject DialogService DialogService

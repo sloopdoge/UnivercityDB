@@ -1,6 +1,6 @@
 ﻿@page "/faculties"
 @rendermode @(new InteractiveServerRenderMode(prerender: true))
-@attribute [StreamRendering(true)]
+@attribute [StreamRendering(false)]
 @inject IFacultyService FacultyService
 @inject IGroupService GroupService
 @inject DialogService DialogService
@@ -24,19 +24,19 @@ else
     <RadzenDataGrid Data="@faculties" TItem="Faculty" ColumnWidth="700px">
         <Columns>
             <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Start" />
-            <RadzenDataGridColumn TItem="Faculty" Property="Title" Title="Title" Frozen="true" Width="200px" TextAlign="TextAlign.Start" />
-            <RadzenDataGridColumn TItem="Faculty" Property="Chairs" Title="Chairs" Frozen="true" Width="200px" TextAlign="TextAlign.Start">
+            <RadzenDataGridColumn TItem="Faculty" Property="Title" Title="Title" Frozen="true" Width="150px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Faculty" Property="Chairs" Title="Chairs" Frozen="true" Width="150px" TextAlign="TextAlign.Start">
                 <Template Context="faculty">
                     @if (faculty.Chairs is not null)
                     {
                         @foreach (var chair in faculty.Chairs)
                         {
-                            <RadzenText>•@chair</RadzenText>
+                            <RadzenText>•@chair.ChairName</RadzenText>
                         }
                     }
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="300px" TextAlign="TextAlign.Start" />
+            <RadzenDataGridColumn TItem="Faculty" Property="Note" Title="Note" Frozen="true" Width="150px" TextAlign="TextAlign.Start" />
             <RadzenDataGridColumn TItem="Faculty" Property="FacultyID" Title="Action" Width="100px" TextAlign="TextAlign.Center">
                 <Template Context="faculty">
                     <RadzenButton Text="Update" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Click="() => OpenFacultyDialog(faculty.FacultyID)" />
